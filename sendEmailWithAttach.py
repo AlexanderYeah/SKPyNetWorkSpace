@@ -5,6 +5,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
+import os
 
 # 设置发件的服务器地址
 SMTPSVR = "smtp.163.com";
@@ -32,6 +33,19 @@ def make_mpa_msg():
     return email;
 
 
+# 2 生成带附件的邮件
+def make_img_msg(fn):
+    #读取本地文件
+    f = open(fn,'rb');
+    data = f.read();
+    f.close();
+    # 创建一个图片的实例
+    email = MIMEImage(data,name=fn);
+    # 添加一个消息头Content-Disposition
+    email.add_header('Content-Disposition','attachment','filename="%s"'%fn);
+    return email;
+
+
 # 2 发送操作
 # 传入参数 来自谁  发送给谁 消息
 def send_msg(fr,to,msg):
@@ -47,10 +61,15 @@ def send_msg(fr,to,msg):
 
 if __name__ == '__main__':
     print ("will send alternative mail");
-    msg = make_mpa_msg();
+    # msg = make_mpa_msg();
+
+    # 将具体的文件路径传递过去
+    fn = "/Users/alexander/Desktop/SKPy/SKPyNetWorkSpace/attach.png";
+    # 发送图片测试
+    msg = make_img_msg(fn);
     msg["From"] = From;
     msg["To"] = To;
-    msg["Subject"] = 'QQYE';
+    msg["Subject"] = 'ImageText';
 
     send_msg(From,To,msg.as_string());
 
